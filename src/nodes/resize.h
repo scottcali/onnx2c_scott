@@ -53,14 +53,15 @@ class Resize : public Node {
 
 	const Tensor* get_roi(void) const
 	{
-		if (get_number_of_inputs() > 1 && get_input_tensor(1)->is_used())
+		// An empty (zero-element) tensor is how ONNX exporters mark an omitted optional input
+		if (get_number_of_inputs() > 1 && get_input_tensor(1)->is_used() && get_input_tensor(1)->data_num_elem() > 0)
 			return get_input_tensor(1);
 		else
 			return nullptr;
 	}
 	const Tensor* get_scales(void) const
 	{
-		if (get_number_of_inputs() > 2 && get_input_tensor(2)->is_used())
+		if (get_number_of_inputs() > 2 && get_input_tensor(2)->is_used() && get_input_tensor(2)->data_num_elem() > 0)
 			return get_input_tensor(2);
 		else
 			return nullptr;

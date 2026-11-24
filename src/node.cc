@@ -88,6 +88,9 @@ void Node::print_parameters(std::ostream& dst, bool not_callsite) const
 		// Unused inputs in the ONNX model still exist in the onnx2c node too
 		if (t->is_used() == false)
 			continue;
+		// Inputs the node chose not to name (e.g. empty optional inputs) are not passed
+		if (name == "")
+			continue;
 		if (not_callsite)
 			params.push_back(t->print_tensor_as_const(name));
 		else

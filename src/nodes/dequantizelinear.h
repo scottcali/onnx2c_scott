@@ -14,10 +14,12 @@ class DequantizeLinear : public Node {
 	{
 		op_name = "DequantizeLinear";
 		axis = 1;
+		block_size = 0;
 	}
 
 	// Attributes
 	int axis;
+	int block_size;
 
 	virtual void parseAttributes(onnx::NodeProto& node) override;
 	virtual void resolve(void) override;
@@ -30,6 +32,8 @@ void DequantizeLinear::parseAttributes(onnx::NodeProto& node)
 		LOG(TRACE) << "Parsing attribute " << a.name() << std::endl;
 		if (a.name() == "axis")
 			axis = parse_attribute_int(a);
+		else if (a.name() == "block_size")
+			block_size = parse_attribute_int(a);
 		else
 			LOG(ERROR) << "Ignoring attribute " << a.name() << " for node DequantizeLinear/" << onnx_name << std::endl;
 	}
@@ -74,6 +78,16 @@ void DequantizeLinear::print(std::ostream& dst) const
 	std::string param_index;
 	if (x_scale->is_scalar()) {
 		param_index = "[0]";
+	}
+	else if (block_size > 0 && x_scale->rank() == x->rank()) {
+		// Blocked quantization: scale/zero_point have the same rank as x,
+		// with the axis dimension reduced by block_size.
+		for (unsigned d = 0; d < x->rank(); d++) {
+			if ((int)d == axis)
+				param_index += "[i" + std::to_string(d) + " / " + std::to_string(block_size) + "]";
+			else
+				param_index += "[i" + std::to_string(d) + "]";
+		}
 	}
 	else {
 		param_index = "[i" + std::to_string(axis) + "]";
