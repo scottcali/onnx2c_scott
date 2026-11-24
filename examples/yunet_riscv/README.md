@@ -1,6 +1,6 @@
 # YuNet int8bq: compact, fast C for RV64 / x86
 
-Model: `face_detection_yunet_2023mar_int8bq.onnx` (OpenCV Zoo, weight-only block-quantized INT8; not included).
+Model: `face_detection_yunet_2023mar_int8bq.onnx` (OpenCV Zoo, weight-only block-quantized INT8; included).
 
 - `yunet_gen.py` + `runtime.c`: generate `yunet_fast.c` (`python yunet_gen.py model.onnx yunet_fast.c`). Same `entry()` signature as onnx2c output.
 - `yunet_fast.c`: generated output (~100 KB vs ~500 KB from onnx2c). INT8 weights are kept in a base64 string and dequantized once on first call.

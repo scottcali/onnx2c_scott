@@ -1,6 +1,6 @@
 import onnx, numpy as np, onnxruntime as ort
 from onnx import numpy_helper as nh
-m=onnx.load("yunet_int8bq.onnx")
+m=onnx.load("face_detection_yunet_2023mar_int8bq.onnx")
 I={t.name:t for t in m.graph.initializer}
 keep=[];new=[]
 for n in m.graph.node:
